@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import About from './views/About.vue'
+import Login from './views/Login.vue'
 import Home from './views/Home.vue'
 import basic from './router/basic.js'
 import exam from './router/exam.js'
@@ -22,8 +22,8 @@ export default new Router({
     },
     {
       path: '/',
-      name: 'about',
-      component: About
+      name: 'Login',
+      component: Login
     }
   ]
 })
