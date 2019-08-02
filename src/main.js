@@ -3,11 +3,13 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import ElementUI from 'element-ui';
-import axios from 'vue-axios';
+import axios from 'axios';
+import Vueaxios from 'vue-axios';
 import 'element-ui/lib/theme-chalk/index.css';
 
-Vue.prototype.$axios = axios;
-Vue.use(ElementUI);
+axios.defaults.baseURL = 'http://192.168.1.188:12'
+Vue.use(Vueaxios,axios)
+Vue.use(ElementUI)
 Vue.config.productionTip = false
 
 new Vue({

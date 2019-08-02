@@ -1,7 +1,7 @@
-import Cpasd from '../Home/basic/ChangePassword.vue'
-import Cmant from '../Home/basic/ClassManagement.vue'
-import Smant from '../Home/basic/StudentManagement.vue'
-import Tmant from '../Home/basic/TeacherManagement.vue'
+import Cpasd from '@/Home/basic/ChangePassword.vue'
+import Cmant from '@/Home/basic/ClassManagement.vue'
+import Smant from '@/Home/basic/StudentManagement.vue'
+import Tmant from '@/Home/basic/TeacherManagement.vue'
 
 export default [{
     path: '/Cpasd',

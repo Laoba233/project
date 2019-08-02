@@ -1,5 +1,5 @@
 <template>
-  <div class="box">
+  <div id="bg">
     <el-form status-icon label-width="100px" class="demo-ruleForm">
       <el-form-item>
         <h1>考试管理系统</h1>
@@ -8,53 +8,103 @@
         <el-input v-model="phone" placeholder="账号"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input type="password" v-model="pwd" placeholder="密码" autocomplete="off"></el-input>
+        <el-input :type="inputType" v-model="pwd" placeholder="密码" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-checkbox v-model="checked">记住密码</el-checkbox>
+        <el-checkbox class="dispwd" v-model="displayPwd" @change="dispaly">显示密码</el-checkbox>
+        <el-checkbox v-model="checked" class="dispwd">记住密码</el-checkbox>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitForm">登入</el-button>
+        <el-button type="primary" @click="submitForm" :loading="long">登入</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script>
+  // 引用工具类
+  import Base from "@/util/Base64";
+  import Cookie from "@/util/Cookie";
+
   export default {
     data() {
       return {
-        checked: false,
-        phone: '',
-        pwd: ''
+        checked: false, //记住密码
+        displayPwd: false, //显示隐藏密码
+        long: false, //登入状态
+        inputType: 'password', //密码框的类型
+        phone: '', //账号
+        pwd: '' //密码
       };
+    },
+    created() {
+      
     },
     methods: {
       submitForm() {
-        if (this.phone == "" && this.pwd == "") {
-          this.$message.error("手机号或密码不能为空")
+        /**
+         *登入提交
+         */
+        let _this = this
+
+        if (_this.phone == "" && _this.pwd == "") {
+          _this.long = true;
+          setTimeout(function () {
+            /**
+             * 给个加载时间
+             */
+            _this.$message.error("手机号或密码不能为空");
+            _this.long = false;
+          }, 2000)
         } else {
-         
+          _this.axios.get('/api/OAuth/authenticate', {
+              params: {
+                userMobile: _this.phone,
+                userPassword: _this.pwd
+              }
+            })
+            .then(function (response) {
+              _this.long = true;
+              //_this.setUserInfo();
+              setTimeout(function () {
+                _this.$router.push("/home");
+                _this.$message.success("登入成功");
+              }, 2000)
+            })
+            .catch(function (error) {
+              _this.long = true;
+              setTimeout(function () {
+                _this.$message.error("手机号或密码错误")
+                _this.long = false;
+              }, 2000)
+            });
 
         }
       },
+      dispaly() {
+        /**
+         *显示隐藏密码
+         */
+        let _this = this
+        if (_this.displayPwd) {
+          _this.inputType = 'text'
+        } else {
+          _this.inputType = 'password'
+        }
+      }
     }
   }
 
 </script>
 
-<style>
-  body {
-    padding: 0px;
-    margin: 0px;
-  }
-
-  .box {
+<style lang="less" scoped>
+  #bg {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-size: 100%;
-    background-image: url(../assets/bjt.webp);
+    background: rgba(0, 0, 0, 0) url("../assets/bg.jpg") no-repeat scroll 100% 100%;
+    background-size: auto;
+    background-size: cover;
   }
 
   h1 {
@@ -70,12 +120,16 @@
     transform: translate(-50%, -50%);
   }
 
-  .el-form-item__content {
+  #bg /deep/.el-form-item__content {
     margin-left: 0px !important;
   }
 
   .el-button {
     width: 100%;
+  }
+
+  .dispwd {
+    color: black !important;
   }
 
 </style>
