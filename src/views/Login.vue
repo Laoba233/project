@@ -5,13 +5,12 @@
         <h1>考试管理系统</h1>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="phone" placeholder="账号"></el-input>
+        <el-input v-model="userMobile" placeholder="账号"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input :type="inputType" v-model="pwd" placeholder="密码" autocomplete="off"></el-input>
+        <el-input  v-model="userPassword" placeholder="密码" autocomplete="off" show-password></el-input>
       </el-form-item>
       <el-form-item>
-        <el-checkbox class="dispwd" v-model="displayPwd" @change="dispaly">显示密码</el-checkbox>
         <el-checkbox v-model="checked" class="dispwd">记住密码</el-checkbox>
       </el-form-item>
       <el-form-item>
@@ -32,13 +31,24 @@
         checked: false, //记住密码
         displayPwd: false, //显示隐藏密码
         long: false, //登入状态
-        inputType: 'password', //密码框的类型
-        phone: '', //账号
-        pwd: '' //密码
+        userMobile: '', //账号
+        userPassword: '' //密码
       };
     },
     created() {
-      
+      //获取存入的账号密码
+      let CokPon = Cookie.getCookie("phone");
+      let CokPwd = Cookie.getCookie("passWord")
+      //把获取的账号密码解密 
+      let phone = Base.decode(CokPon);
+      let password = Base.decode(CokPwd);
+
+      //如果cookie有账号密码就把他渲染到页面上来
+      if(phone&&password){
+        this.checked=true;
+        this.userMobile=phone;
+        this.userPassword=password;
+      }
     },
     methods: {
       submitForm() {
@@ -59,37 +69,47 @@
         } else {
           _this.axios.get('/api/OAuth/authenticate', {
               params: {
-                userMobile: _this.phone,
-                userPassword: _this.pwd
+                userMobile: _this.userMobile,
+                userPassword: _this.userPassword
               }
             })
             .then(function (response) {
               _this.long = true;
-              //_this.setUserInfo();
+
               setTimeout(function () {
                 _this.$router.push("/home");
                 _this.$message.success("登入成功");
               }, 2000)
+              _this.setInfoName()
+              
             })
             .catch(function (error) {
               _this.long = true;
               setTimeout(function () {
-                _this.$message.error("手机号或密码错误")
-                _this.long = false;
-              }, 2000)
+            _this.$message.error("手机号或密码不正确");
+            _this.long = false;
+          }, 2000)
             });
 
         }
       },
-      dispaly() {
+      setInfoName(){
         /**
-         *显示隐藏密码
-         */
-        let _this = this
-        if (_this.displayPwd) {
-          _this.inputType = 'text'
-        } else {
-          _this.inputType = 'password'
+         * 选择勾选记住密码
+        */
+        var _this = this;
+        if (_this.checked) {
+          //获取输入的账号密码并且加密
+          let phone = Base.encode(_this.userMobile);  
+          let password = Base.encode(_this.userPassword);
+
+          //把加密的账号密码存入cookie中
+          Cookie.setCookie("phone", phone);
+          Cookie.setCookie("passWord", password);
+        }else{
+          //存入空值
+          Cookie.removeCookie("phone"); //移除cookie账号
+          Cookie.removeCookie("passWord"); //移除cookie密码
         }
       }
     }
