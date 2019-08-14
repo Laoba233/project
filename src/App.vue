@@ -4,12 +4,12 @@
   </div>
 </template>
 
-<style>
+<style lang="less">
   body {
     padding: 0px;
     margin: 0px;
   }
-  html,body,#app,#home{
+  html,body,#app{
     height: 100% !important;
   }
-</style>
+</stylec>

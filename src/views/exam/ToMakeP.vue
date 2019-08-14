@@ -1,15 +1,17 @@
 <template>
   <div>
-      <h1>
-          班级管理
-      </h1>
+    <h1>
+      制作试卷
+    </h1>
+    
   </div>
 </template>
 
 <script>
-export default {
+  export default {
+   
+  }
 
-}
 </script>
 
 <style>
